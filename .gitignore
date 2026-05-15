@@ -1,0 +1,5 @@
+*.csv
+model.json
+forest.bin
+.ipynb_checkpoints
+.env
