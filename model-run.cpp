@@ -42,14 +42,25 @@ int predict_forest(
     vector<float>& x
 ) {
 
-    vector<int> votes(100, 0);
-    
-    for(auto& tree : forest) {
+    vector<int> votes(100, 0);//assuming multiple categories 
+    // we need a global array if we are going to parallesise all the trees 
 
-        int cls = predict_tree(tree, x);
+    int n=forest.size();
+    vector<int>dec(n,-1);//descisions are stored in this 
 
-        votes[cls]++;
+
+
+    #pragma omp parallel for
+    for(int i=0;i<n;i++) {
+       //auto tree=forest[i];
+        int cls = predict_tree(forest[i], x);
+       dec[i]=cls;
+        // votes[cls]++;
     }
+    for(int i=0;i<n;i++){
+       votes[dec[i]]++;
+    }
+
 
     int best = 0;
 
