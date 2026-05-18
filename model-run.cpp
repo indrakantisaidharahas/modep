@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-
+#include<chrono>
 using namespace std;
 
 struct Tree {
@@ -149,13 +149,17 @@ vector<float> x = {
 1,52,1,1,125,325,0,2,171,0,0.0,1,0,3
 };
 
+std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
 int pred = predict_forest(
     forest,
     x
 );
-
+std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+ int elap=std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() ;
 cout << "Prediction = "
      << pred
      << endl;
+cout<<"bench:"<<elap<<endl;     
     return 0;
 }

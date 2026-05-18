@@ -7,8 +7,12 @@ TARGET = model-run
 SRC = model-run.cpp
 
 all:
-	##$(CXX) $(CXXFLAGS) $(SRC) -o $(TARGET)
+	$(CXX) $(CXXFLAGS) $(SRC) -o $(TARGET)
 	$ ./model-run
 
 run: model-run
 	./model-run	
+run-bfs: $ g++ -O3 -fopenmp test.cpp -o test
+         $ ./test
+
+
