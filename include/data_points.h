@@ -2,11 +2,13 @@
 #include<string> 
 #include<vector>
 #include<iostream>
+#include "dec_tree.h"
+#include<chrono>
 using namespace std;
 
 class data_points{
  public:   
-    int batch_s=10;// no of data points that can be in a batch 
+    int batch_s=100;// no of data points that can be in a batch 
     int col=1;
     bool eof=false;
     string line;
@@ -15,69 +17,67 @@ class data_points{
     vector<vector<float>>dpoints;
     
     
-    data_points(string path){
-      
-     this->file.open(path);
+    vector<int> predict(string path) {
 
-      /*----------------------------*/
-      std::getline(this->file,this->line);//getting of the header columns 
+    ifstream file(path);
+    vector<int> final_ans;
 
-      for(auto c:this->line){
-      if(c==','){
-      	this->col++;
-      }
-      }
-      /*------------------------------*/
-      
-      dpoints.resize(batch_s,vector<float>(col));//resize 
+    string line;
 
+    getline(file, line); // header
 
-      while(!this->eof){
-      	int t_col=0;
-        string t_s="";
+    int col = 1;
+    for (char c : line)
+        if (c == ',') col++;
 
-      /*--------BATCH PROCESSING----------*/
-       for(int i=0;i<this->batch_s;i++){
-       	if(!std::getline(this->file,this->line)){
-       		eof=true;
-       		break;
-       	}
+ 
 
-      
+    vector<vector<float>> batch;
+    batch.reserve(batch_s);
 
-       	t_col=0;
-         t_s="";
+    random_forest rf("forest.bin");
+    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
+    while (true) {
 
-       	for(auto c:this->line){
+        batch.clear();
 
-          if(c!=','){
-          	t_s+=c;
-          }else{
-          	//cout << "[" << t_s << "]" << endl;
+        for (int i = 0; i < batch_s; i++) {
 
-this->dpoints[i][t_col] = stof(t_s);
-            t_s="";
-          	t_col++;
-          }
+            if (!getline(file, line))
+                break;
 
-       	}
+            vector<float> row;
+            string temp = "";
 
-       	this->dpoints[i][t_col]=stof(t_s);
-        t_s="";
+            for (char c : line) {
+                if (c == ',') {
+                    row.push_back(stof(temp));
+                    temp = "";
+                } else {
+                    temp += c;
+                }
+            }
 
-       }
-     /*-----------------------------------*/  
+            row.push_back(stof(temp));
+            batch.push_back(row);
+        }
 
-      }
+        if (batch.empty())
+            break;
 
-      
+        auto pred = rf.predict(batch);
 
-
-     cout<<"loaded"<<endl;
+        final_ans.insert(final_ans.end(), pred.begin(), pred.end());
     }
+    
 
+std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+ int elap=std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() ;
 
+cout<<"bench:"<<elap<<endl; 
 
+    return final_ans;
+}
  
 };
