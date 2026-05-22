@@ -20,7 +20,7 @@ public:
         int n = x.size();
         vector<int> result(n);
 
-        #pragma omp parallel for
+         #pragma omp parallel for
         for (int i = 0; i < n; i++) {
 
             int node = 0;
@@ -121,7 +121,7 @@ public:
         for (int i = 0; i < n; i++) {
             result[i] = (votes[i] > n_trees / 2) ? 1 : 0;
         }
-        cout<<"finished"<<endl;
+        //cout<<"finished"<<endl;
         return result;
     }
 };

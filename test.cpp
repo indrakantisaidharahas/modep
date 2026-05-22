@@ -3,8 +3,8 @@
 int main() {
 
     data_points df;
-    
-    auto ans=df.predict("test2.csv");
+    random_forest rf("forest.bin");
+    auto ans=df.predict("test.csv",rf);
     for(auto i:ans){
 cout<<i<<" ";
     }

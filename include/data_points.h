@@ -8,16 +8,17 @@ using namespace std;
 
 class data_points{
  public:   
-    int batch_s=100;// no of data points that can be in a batch 
+    int batch_s=1000;// no of data points that can be in a batch 
     int col=1;
     bool eof=false;
     string line;
     std::ifstream file;
     /*-----vector storage for data points-------*/
-    vector<vector<float>>dpoints;
+    //vector<vector<float>>dpoints;
+    vector<vector<float>> batch;
     
     
-    vector<int> predict(string path) {
+    vector<int> predict(string path,random_forest &rf) {
 
     ifstream file(path);
     vector<int> final_ans;
@@ -32,10 +33,11 @@ class data_points{
 
  
 
-    vector<vector<float>> batch;
+ 
     batch.reserve(batch_s);
 
-    random_forest rf("forest.bin");
+    //random_forest rf("forest.bin"); //----->remove this 
+   
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
     while (true) {
